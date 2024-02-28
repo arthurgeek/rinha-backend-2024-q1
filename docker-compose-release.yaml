@@ -1,0 +1,34 @@
+version: "3.5"
+
+services:
+  api01: &api
+    network_mode: host
+    environment:
+      - PORT=6342
+    build:
+      target: runtime-release
+    healthcheck:
+      test: curl --fail http://localhost:6342/clientes/1/extrato || exit 1
+    volumes:
+      - "postgres-socket:/var/run/postgresql"
+
+  api02:
+    <<: *api
+    environment:
+      - PORT=6343
+    hostname: api02
+    healthcheck:
+      test: curl --fail http://localhost:6343/clientes/1/extrato || exit 1
+
+  envoy:
+    network_mode: host
+    volumes:
+      - ./config/envoy-release.yaml:/etc/envoy/envoy.yaml
+
+  db:
+    network_mode: host
+    volumes:
+      - "postgres-socket:/var/run/postgresql"
+
+volumes:
+  postgres-socket:

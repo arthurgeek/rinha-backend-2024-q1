@@ -1,0 +1,7 @@
+target/
+.github/
+sql/
+config/
+docker-compose.yaml
+README.md
+Dockerfile
